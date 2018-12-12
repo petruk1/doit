@@ -7,14 +7,23 @@ import {AngularFireModule} from 'angularfire2';
 import {AngularFireAuthModule} from 'angularfire2/auth';
 import {environment} from '../environments/environment';
 import {AuthModule} from './auth/auth.module';
+import {MapComponent} from './map/map.component';
+import {AboutAuthorComponent} from './about-author/about-author.component';
+import {AuthGuard} from './guards/auth.guard';
+
 const APP_ROUTES: Routes = [
   {
-    path: '', redirectTo: 'auth', pathMatch: 'full',
+    path: '', redirectTo: '/map', pathMatch: 'full',
+  }, {
+    path: 'map', component: MapComponent, canActivate: [AuthGuard]
   }
 ];
+
 @NgModule({
   declarations: [
     AppComponent,
+    MapComponent,
+    AboutAuthorComponent
 
   ],
   imports: [

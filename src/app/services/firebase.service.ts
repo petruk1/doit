@@ -18,6 +18,7 @@ export class FirebaseService {
         this.userId = user.uid;
       }
     });
+
   }
 
   public get authError(): object {
@@ -33,6 +34,7 @@ export class FirebaseService {
     this.fireAuth.auth.signInWithEmailAndPassword(email, password)
       .then(() => {
         this._authError = null;
+        this.router.navigate(['/map']);
       })
       .catch((err: object) => this.authError = err);
   }
