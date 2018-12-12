@@ -1,0 +1,49 @@
+<form [formGroup]="registrationForm">
+  <h3>Sign Up</h3>
+  <div class="inputs">
+
+    <label>Name</label>
+    <input formControlName="name"
+           [class.invalid]="name.touched&&name.invalid">
+    <div class="error-message"
+         *ngIf="name.errors?.required && name.touched">
+      Name is required
+    </div>
+
+    <label>Surname</label>
+    <input formControlName="surname"
+           [class.invalid]="surname.touched&&surname.invalid">
+    <div class="error-message"
+         *ngIf="surname.errors?.required && surname.touched">
+      Surname is required
+    </div>
+
+    <label>Email</label>
+    <input formControlName="email"
+           [class.invalid]="email.touched && email.invalid">
+    <div class="error-message"
+         *ngIf="email.errors && (email.touched ||email.dirty)">
+      <div *ngIf="email.errors.required">Email is required</div>
+      <div *ngIf="email.errors.email">Email is not valid</div>
+      <div *ngIf="email.errors.emailAvailability">Email is already registered</div>
+    </div>
+
+    <label>Password</label>
+    <input type="password"
+           formControlName="password"
+           [class.invalid]="password.touched && password.invalid">
+    <div class="error-message"
+         *ngIf="password.errors&& password.touched">
+      <div *ngIf="password.errors.required">password is required</div>
+      <div *ngIf="password.errors.minlength">Password is too short</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button [disabled]="registrationForm.invalid"
+            (click)="createAccount(registrationForm.value)">
+      Sign Up
+    </button>
+    <button routerLink="../">Cancel</button>
+  </div>
+</form>
