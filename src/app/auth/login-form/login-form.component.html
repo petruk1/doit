@@ -1,0 +1,20 @@
+<form [formGroup]="signInForm">
+  <h3>Sign in</h3>
+  <div class="inputs">
+    <label>Email</label>
+    <input formControlName="email">
+    <label>Password</label>
+    <input type="password"
+           formControlName="password">
+  </div>
+  <div class="error-message" *ngIf="authErrors">
+    Email or password is wrong!
+  </div>
+  <div class="actions">
+    <button [disabled]="this.signInForm.invalid"
+            (click)="login(this.signInForm.value)">
+      Sign in
+    </button>
+    <a routerLink="../sign-up">Create account!</a>
+  </div>
+</form>
