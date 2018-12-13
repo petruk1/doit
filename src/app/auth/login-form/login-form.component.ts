@@ -31,7 +31,7 @@ export class LoginFormComponent implements OnInit {
      this.fbService.login(data);
   }
 
-  public get authErrors(): object {
+  public get authErrors(): any {
     return this.fbService.authError;
   }
 

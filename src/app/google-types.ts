@@ -24,3 +24,13 @@ export class Size extends google.maps.Size {
 
 export class MapPoint extends google.maps.Point {
 }
+
+import PlacesServiceStatus = google.maps.places.PlacesServiceStatus;
+
+export {PlacesServiceStatus};
+
+export interface PlaceResult extends google.maps.places.PlaceResult {
+
+}
+import MapEvent = google.maps.event;
+export {MapEvent};

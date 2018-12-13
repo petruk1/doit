@@ -5,16 +5,14 @@ import {User} from 'firebase';
 import {UserAuthData} from '../auth/interfaces';
 import {AngularFireDatabase} from 'angularfire2/database'
 import {Point} from '../classes';
-import {Observable} from 'rxjs/index';
-import DataSnapshot = firebase.database.DataSnapshot;
+import Reference = firebase.database.Reference;
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseService {
-  private _authError: object;
+  private _authError: any;
   private userId: string;
-  public points$: Observable<Point[]>;
 
   constructor(private fireAuth: AngularFireAuth,
               private fireDatabase: AngularFireDatabase,
@@ -24,14 +22,13 @@ export class FirebaseService {
         this.userId = user.uid;
       }
     });
-
   }
 
-  public get authError(): object {
+  public get authError(): any {
     return this._authError;
   }
 
-  public set authError(error: object) {
+  public set authError(error: any) {
     this._authError = error;
   }
 
@@ -42,7 +39,7 @@ export class FirebaseService {
         this._authError = null;
         this.router.navigate(['/map']);
       })
-      .catch((err: object) => this.authError = err);
+      .catch((err: any) => this.authError = err);
   }
 
   public isEmailAvailable(email: string): Promise<any> {
@@ -63,10 +60,7 @@ export class FirebaseService {
     });
   }
 
-  public loadPointsFromServer(): Promise<DataSnapshot> {
-    return this.fireDatabase.database.ref(`${this.userId}/points`)
-      .once('value', (data: DataSnapshot) => {
-
-      });
+  public loadPointsFromServer(): Reference {
+    return this.fireDatabase.database.ref(`${this.userId}/points`);
   }
 }

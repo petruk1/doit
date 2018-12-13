@@ -15,9 +15,15 @@ import {AuthGuard} from './guards/auth.guard';
 const APP_ROUTES: Routes = [
   {
     path: '', redirectTo: '/map', pathMatch: 'full',
-  }, {
-    path: 'map', component: MapComponent, canActivate: [AuthGuard]
-  }
+  },
+  {
+    path: 'map', component: MapComponent, canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'about-author', component: AboutAuthorComponent
+      }
+    ]
+  },
 ];
 
 @NgModule({

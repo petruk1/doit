@@ -1,10 +1,11 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {RegistrationFormComponent} from './registration-form/registration-form.component';
 import {LoginFormComponent} from './login-form/login-form.component';
 import {AuthComponent} from './auth.component';
 import {RouterModule, Routes} from '@angular/router';
 import {ReactiveFormsModule} from '@angular/forms';
+
 const AUTH_ROUTES: Routes = [
   {
     path: 'auth', component: AuthComponent,
@@ -15,6 +16,7 @@ const AUTH_ROUTES: Routes = [
     ]
   }
 ];
+
 @NgModule({
   imports: [
     CommonModule,
@@ -28,4 +30,5 @@ const AUTH_ROUTES: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AuthModule { }
+export class AuthModule {
+}

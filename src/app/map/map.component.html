@@ -1,6 +1,6 @@
 <div class="aside">
   <ul class="items-list">
-    <li class="item hover" (click)="onPharmasyClicked()">Pharmacies</li>
+    <li class="item hover" (click)="onPharmacyClicked()">Pharmacies</li>
     <li class="item hover" (click)="onGasStationClicked()">Gas station</li>
     <li class="item hover" (click)="onSchoolsClicked()">Schools</li>
     <li class="item hover" (click)="onRestaurantClicked()">Restaurants</li>
@@ -13,6 +13,11 @@
     <button class="btn hover"
             (click)="loadPoints()">Load points
     </button>
+    <hr>
+    <button class="btn hover"
+            (click)="navigateToAboutAuthor()"> about author
+    </button>
   </div>
 </div>
 <div #mapContainer class="map"></div>
+<router-outlet></router-outlet>

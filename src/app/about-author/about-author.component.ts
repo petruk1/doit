@@ -11,7 +11,7 @@ export class AboutAuthorComponent {
   constructor(private router: Router) {
   }
 
-  public close() {
+  public close():void {
     this.router.navigate(['../']);
   }
 }
