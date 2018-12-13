@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
-import {Map, Marker} from '../google-types';
+import {Geocoder, Map, MapPoint, Marker, PlaceService, Size} from '../google-types';
 import {FirebaseService} from '../services/firebase.service';
 import {Point} from '../classes';
 import DataSnapshot = firebase.database.DataSnapshot;
@@ -16,6 +16,10 @@ export class MapComponent implements AfterViewInit {
   private oldUserPoints: Point[] = [];
   private newUserPoints: Point[] = [];
   private markersFromUserPoints: Marker[] = [];
+  private geocoder = new Geocoder();
+  private usersCoordinates: Point;
+  private placesService: PlaceService;
+  private placesMarkers: Marker[] = [];
 
   constructor(private fireService: FirebaseService) {
   }
@@ -28,9 +32,10 @@ export class MapComponent implements AfterViewInit {
     this.map.addListener('tilesloaded', () => {
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition((position) => {
+          this.usersCoordinates = new Point(position.coords.latitude, position.coords.longitude);
           new Marker({
             map: this.map,
-            position: new Point(position.coords.latitude, position.coords.longitude),
+            position: this.usersCoordinates,
             title: 'You are here',
             icon: {
               url: '../../assets/images/marker-blue-dot.png',
@@ -40,6 +45,7 @@ export class MapComponent implements AfterViewInit {
       } else {
         alert('Geolocation is not allowed');
       }
+      this.placesService = new PlaceService(this.map);
     });
     this.map.addListener('click', (event: any) => {
       const point = new Point(event.latLng.lat(), event.latLng.lng());
@@ -70,29 +76,46 @@ export class MapComponent implements AfterViewInit {
     });
   }
 
-}
-
-/*  геолокация НЕдоступна
-this.map = DG.map('map', {
-  center: [54.98, 82.89],
-  zoom: 13
-});
-console.log(this.map);
-this.map.on('click', (e) => {
-  DG.marker([e.latlng.lat, e.latlng.lng]).addTo(this.map);
-});
-if ('geolocation' in navigator) {
-  navigator.geolocation.getCurrentPosition((position) => {
-    DG.marker([position.coords.latitude, position.coords.longitude]).addTo(this.map);
-    this.map.panTo([position.coords.latitude, position.coords.longitude]);
-  });
-}
-console.log(this.map)
-this.map.geocoder.get('заправка', {
-  types: ['city', 'settlement', 'district'],
-  limit: 10,
-  // Обработка успешного поиска
-  success: function (geocoderObjects) {
-    console.log(geocoderObjects);
+  public onPharmasyClicked(){
+    this.getPlaces(['pharmacy'], 2000);
+  }public onRestaurantClicked(){
+    this.getPlaces(['restaurant'], 2000);
   }
-});*/
+  public onGasStationClicked(){
+    this.getPlaces(['gas_station'], 2000);
+  }
+  public onSchoolsClicked(): void {
+    this.getPlaces(['school'], 2000);
+  }
+
+  private getPlaces(places: string[], radius: number) {
+    this.placesMarkers.forEach((marker: Marker) => marker.setMap(null));
+    this.placesService.nearbySearch({
+      location: this.usersCoordinates,
+      radius: radius,
+      types: places
+    }, (res: any, status: any) => {
+      console.log(res)
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        res.forEach((place) => {
+          const location = place.geometry.location;
+          const point = new Point(location.lat(), location.lng());
+          this.placesMarkers.push(new Marker({
+            map: this.map,
+            position: point,
+            title: place.name,
+            icon: {
+              url: place.icon,
+              size: new Size(71, 71),
+              origin: new MapPoint(0, 0),
+              anchor: new MapPoint(17, 34),
+              scaledSize: new Size(25, 25)
+            }
+          }));
+        });
+      } else {
+        alert('there is no organisation in 2km from you')
+      }
+    });
+  }
+}
