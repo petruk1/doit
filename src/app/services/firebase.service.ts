@@ -3,6 +3,10 @@ import {AngularFireAuth} from 'angularfire2/auth';
 import {Router} from '@angular/router';
 import {User} from 'firebase';
 import {UserAuthData} from '../auth/interfaces';
+import {AngularFireDatabase} from 'angularfire2/database'
+import {Point} from '../classes';
+import {Observable} from 'rxjs/index';
+import DataSnapshot = firebase.database.DataSnapshot;
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +14,10 @@ import {UserAuthData} from '../auth/interfaces';
 export class FirebaseService {
   private _authError: object;
   private userId: string;
+  public points$: Observable<Point[]>;
 
   constructor(private fireAuth: AngularFireAuth,
+              private fireDatabase: AngularFireDatabase,
               private router: Router) {
     this.fireAuth.authState.subscribe((user: User) => {
       if (user) {
@@ -43,11 +49,24 @@ export class FirebaseService {
     return this.fireAuth.auth.fetchSignInMethodsForEmail(email);
   }
 
-  public create(data: UserAuthData): void {
+  public createUser(data: UserAuthData): void {
     const {email, password, name, surname} = data;
     this.fireAuth.auth.createUserWithEmailAndPassword(email, password)
       .then(() => this.login(data))
       .then(() => this.fireAuth.auth.currentUser
         .updateProfile({displayName: `${name} ${surname}`, photoURL: null}));
+  }
+
+  public savePointsOnServer(points: Point[]): void {
+    points.forEach((point: Point) => {
+      this.fireDatabase.database.ref(`${this.userId}/points`).push(point);
+    });
+  }
+
+  public loadPointsFromServer(): Promise<DataSnapshot> {
+    return this.fireDatabase.database.ref(`${this.userId}/points`)
+      .once('value', (data: DataSnapshot) => {
+
+      });
   }
 }

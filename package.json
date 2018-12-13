@@ -11,6 +11,7 @@
   },
   "private": true,
   "dependencies": {
+    "2gis-maps": "^3.5.3",
     "@angular/animations": "^6.0.3",
     "@angular/common": "^6.0.3",
     "@angular/compiler": "^6.0.3",
@@ -20,6 +21,7 @@
     "@angular/platform-browser": "^6.0.3",
     "@angular/platform-browser-dynamic": "^6.0.3",
     "@angular/router": "^6.0.3",
+    "@types/googlemaps": "^3.30.16",
     "angularfire2": "^5.0.0-rc.12-next",
     "core-js": "^2.5.4",
     "firebase": "^5.4.2",
