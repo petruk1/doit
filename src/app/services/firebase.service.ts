@@ -3,15 +3,19 @@ import {AngularFireAuth} from 'angularfire2/auth';
 import {Router} from '@angular/router';
 import {User} from 'firebase';
 import {UserAuthData} from '../auth/interfaces';
+import {AngularFireDatabase} from 'angularfire2/database'
+import {Point} from '../classes';
+import Reference = firebase.database.Reference;
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseService {
-  private _authError: object;
+  private _authError: any;
   private userId: string;
 
   constructor(private fireAuth: AngularFireAuth,
+              private fireDatabase: AngularFireDatabase,
               private router: Router) {
     this.fireAuth.authState.subscribe((user: User) => {
       if (user) {
@@ -20,11 +24,11 @@ export class FirebaseService {
     });
   }
 
-  public get authError(): object {
+  public get authError(): any {
     return this._authError;
   }
 
-  public set authError(error: object) {
+  public set authError(error: any) {
     this._authError = error;
   }
 
@@ -33,19 +37,30 @@ export class FirebaseService {
     this.fireAuth.auth.signInWithEmailAndPassword(email, password)
       .then(() => {
         this._authError = null;
+        this.router.navigate(['/map']);
       })
-      .catch((err: object) => this.authError = err);
+      .catch((err: any) => this.authError = err);
   }
 
   public isEmailAvailable(email: string): Promise<any> {
     return this.fireAuth.auth.fetchSignInMethodsForEmail(email);
   }
 
-  public create(data: UserAuthData): void {
+  public createUser(data: UserAuthData): void {
     const {email, password, name, surname} = data;
     this.fireAuth.auth.createUserWithEmailAndPassword(email, password)
       .then(() => this.login(data))
       .then(() => this.fireAuth.auth.currentUser
         .updateProfile({displayName: `${name} ${surname}`, photoURL: null}));
+  }
+
+  public savePointsOnServer(points: Point[]): void {
+    points.forEach((point: Point) => {
+      this.fireDatabase.database.ref(`${this.userId}/points`).push(point);
+    });
+  }
+
+  public loadPointsFromServer(): Reference {
+    return this.fireDatabase.database.ref(`${this.userId}/points`);
   }
 }

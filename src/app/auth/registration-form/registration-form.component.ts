@@ -36,7 +36,7 @@ export class RegistrationFormComponent implements OnInit {
   }
 
   public createAccount(data: UserAuthData): void {
-     this.firebaseService.create(data);
+     this.firebaseService.createUser(data);
   }
 
   public get name(): AbstractControl {

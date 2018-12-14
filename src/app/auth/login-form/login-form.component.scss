@@ -1,6 +1,7 @@
 $input-color: #464646;
-$button-backgroundColor: #4cda57;
+$button-background-color: #4cda57;
 $input-border-color: #eaeaea;
+
 :host {
   display: flex;
   flex-direction: column;
@@ -38,8 +39,6 @@ $input-border-color: #eaeaea;
       }
     }
 
-
-
     .actions {
       display: flex;
       justify-content: space-between;
@@ -52,7 +51,7 @@ $input-border-color: #eaeaea;
         padding: 5px 20px;
         border-radius: 3px;
         border: none;
-        background-color: $button-backgroundColor;
+        background-color: $button-background-color;
         color: whitesmoke;
         cursor: pointer;
         &:hover{
