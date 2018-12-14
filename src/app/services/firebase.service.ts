@@ -3,7 +3,7 @@ import {AngularFireAuth} from 'angularfire2/auth';
 import {Router} from '@angular/router';
 import {User} from 'firebase';
 import {UserAuthData} from '../auth/interfaces';
-import {AngularFireDatabase} from 'angularfire2/database'
+import {AngularFireDatabase} from 'angularfire2/database';
 import {Point} from '../classes';
 import Reference = firebase.database.Reference;
 
@@ -17,6 +17,10 @@ export class FirebaseService {
   constructor(private fireAuth: AngularFireAuth,
               private fireDatabase: AngularFireDatabase,
               private router: Router) {
+    this.detectUserAuthChanges();
+  }
+
+  private detectUserAuthChanges() {
     this.fireAuth.authState.subscribe((user: User) => {
       if (user) {
         this.userId = user.uid;
@@ -42,6 +46,10 @@ export class FirebaseService {
       .catch((err: any) => this.authError = err);
   }
 
+  public logout(): void {
+    this.fireAuth.auth.signOut().catch((err: any) => alert(`Something went wrong: ${err}`));
+  }
+
   public isEmailAvailable(email: string): Promise<any> {
     return this.fireAuth.auth.fetchSignInMethodsForEmail(email);
   }
@@ -49,9 +57,13 @@ export class FirebaseService {
   public createUser(data: UserAuthData): void {
     const {email, password, name, surname} = data;
     this.fireAuth.auth.createUserWithEmailAndPassword(email, password)
-      .then(() => this.login(data))
-      .then(() => this.fireAuth.auth.currentUser
-        .updateProfile({displayName: `${name} ${surname}`, photoURL: null}));
+      .then(() => {
+        this.login(data);
+        this.fireAuth.auth.currentUser
+          .updateProfile({displayName: `${name} ${surname}`, photoURL: null})
+          .catch((err: any) => alert(`For a some reason cannot update user profile: ${err}`));
+      })
+      .catch((err: any) => alert(`Something went wrong: ${err}`));
   }
 
   public savePointsOnServer(points: Point[]): void {

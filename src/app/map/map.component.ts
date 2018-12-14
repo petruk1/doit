@@ -2,7 +2,7 @@ import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {Map, MapEvent, MapPoint, Marker, PlaceResult, PlaceService, PlacesServiceStatus, Size} from '../google-types';
 import {FirebaseService} from '../services/firebase.service';
 import {Point} from '../classes';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import DataSnapshot = firebase.database.DataSnapshot;
 
 @Component({
@@ -27,7 +27,8 @@ export class MapComponent implements AfterViewInit {
   };
 
   constructor(private fireService: FirebaseService,
-              private router: Router) {
+              private router: Router,
+              private route: ActivatedRoute) {
   }
 
   public ngAfterViewInit(): void {
@@ -48,9 +49,13 @@ export class MapComponent implements AfterViewInit {
   }
 
   public savePoints(): void {
-    this.fireService.savePointsOnServer(this.newUserPoints);
-    this.newUserPoints = [];
-    alert('New Points are saved!');
+    if (this.newUserPoints.length === 0) {
+      alert('There are no new points on the map to save.\nPlease, Click on the map to create a new point!');
+    } else {
+      this.fireService.savePointsOnServer(this.newUserPoints);
+      this.newUserPoints = [];
+      alert('All new points are saved!');
+    }
   }
 
   private showUsersGeoPositionMarker(): void {
@@ -78,10 +83,15 @@ export class MapComponent implements AfterViewInit {
     this.oldUserPoints = [];
     this.fireService.loadPointsFromServer()
       .once('value', (data: DataSnapshot) => {
-        this.oldUserPoints = Object.values(data.val());
-        this.oldUserPoints.forEach((point: Point) => {
-          this.setMarker(point);
-        });
+        if (data.exists()) {
+          this.oldUserPoints = Object.values(data.val());
+          this.oldUserPoints.forEach((point: Point) => {
+            this.setMarker(point);
+          });
+        } else {
+          alert('Nothing to show!');
+        }
+
       }).catch((err: any) => alert(`Cannot load point while ${err}`));
   }
 
@@ -138,5 +148,10 @@ export class MapComponent implements AfterViewInit {
 
   public navigateToAboutAuthor(): void {
     this.router.navigate(['map/about-author']);
+  }
+
+  public logout(): void {
+    this.fireService.logout();
+    this.router.navigate(['../', {relativeTo: this.route}]);
   }
 }
