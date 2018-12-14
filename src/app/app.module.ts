@@ -7,12 +7,15 @@ import {AngularFireModule} from 'angularfire2';
 import {AngularFireAuthModule} from 'angularfire2/auth';
 import {AngularFireDatabaseModule} from 'angularfire2/database';
 import {environment} from '../environments/environment';
-import {AuthModule} from './auth/auth.module';
 import {MapComponent} from './map/map.component';
 import {AboutAuthorComponent} from './about-author/about-author.component';
 import {AuthGuard} from './guards/auth.guard';
 
 const APP_ROUTES: Routes = [
+  {
+    path: 'auth',
+    loadChildren: './auth/auth.module#AuthModule'
+  },
   {
     path: '', redirectTo: '/map', pathMatch: 'full',
   },
@@ -31,14 +34,12 @@ const APP_ROUTES: Routes = [
     AppComponent,
     MapComponent,
     AboutAuthorComponent
-
   ],
   imports: [
     BrowserModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFireDatabaseModule,
-    AuthModule,
     RouterModule.forRoot(APP_ROUTES)
   ],
   providers: [],
