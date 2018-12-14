@@ -14,10 +14,14 @@ export class RegistrationFormComponent implements OnInit {
   public registrationForm: FormGroup;
 
   constructor(private fb: FormBuilder,
-              private firebaseService: FirebaseService) {
+              private fireService: FirebaseService) {
   }
 
   public ngOnInit(): void {
+    this.makeForm();
+  }
+
+  private makeForm(): void {
     this.registrationForm = this.fb.group({
       name: [null, [Validators.required]],
       surname: [null, [Validators.required]],
@@ -26,7 +30,7 @@ export class RegistrationFormComponent implements OnInit {
           Validators.required,
           CustomValidators.emailFormat
         ], [
-          CustomValidators.emailAvailability(600, this.firebaseService)
+          CustomValidators.emailAvailability(600, this.fireService)
         ]
       ],
       password: [null, [Validators.required,
@@ -36,7 +40,7 @@ export class RegistrationFormComponent implements OnInit {
   }
 
   public createAccount(data: UserAuthData): void {
-     this.firebaseService.createUser(data);
+    this.fireService.createUser(data);
   }
 
   public get name(): AbstractControl {

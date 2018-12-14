@@ -12,11 +12,15 @@ export class LoginFormComponent implements OnInit {
 
   public signInForm: FormGroup;
 
-  constructor(private fbService: FirebaseService,
+  constructor(private fireService: FirebaseService,
               private formBuilder: FormBuilder) {
   }
 
   public ngOnInit(): void {
+    this.makeForm();
+  }
+
+  private makeForm(): void {
     this.signInForm = this.formBuilder.group({
       email: ['', [
         Validators.required,
@@ -28,11 +32,11 @@ export class LoginFormComponent implements OnInit {
   }
 
   public login(data: UserAuthData): void {
-     this.fbService.login(data);
+    this.fireService.login(data);
   }
 
   public get authErrors(): any {
-    return this.fbService.authError;
+    return this.fireService.authError;
   }
 
 }
